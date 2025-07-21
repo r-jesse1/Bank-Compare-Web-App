@@ -19,6 +19,7 @@ import {
   Switch,
   ThemeIcon,
   MultiSelect,
+  NumberInput,
 } from "@mantine/core";
 
 import {
@@ -38,6 +39,8 @@ import {
 } from "@mantine/core";
 import "./App.css";
 
+import { bankList } from "./BankList";
+
 import { IconSun, IconMoon } from "@tabler/icons-react";
 import { SavingsCard } from "./SavingsCard";
 
@@ -45,9 +48,13 @@ import { useEffect, useState, useRef, useCallback } from "react";
 
 export function Savings() {
   const [savings, setSavings] = useState([]);
+  const [userBalance, setUserBalance] = useState(0);
+
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [sortBy, setSortBy] = useState("TotalRate desc");
+  const [selectedBanks, setSelectedBanks] = useState([]);
+
   const observer = useRef();
 
   const { setColorScheme } = useMantineColorScheme();
@@ -72,14 +79,13 @@ export function Savings() {
 
   const fetchSavings = async (pageNumber) => {
     try {
-      const bankList = ["ANZ", "NAB", "Westpac"];
-
       const params = new URLSearchParams({
         pageNumber: pageNumber.toString(),
         pageSize: "10",
         sortBy: sortBy,
       });
-      bankList.forEach((bank) => params.append("banks", bank));
+
+      selectedBanks.forEach((bank) => params.append("banks", bank));
 
       const response = await fetch(
         `http://localhost:5134/savingsrate?${params.toString()}`
@@ -98,12 +104,11 @@ export function Savings() {
 
   useEffect(() => {
     fetchSavings(page);
-  }, [page, sortBy]);
+  }, [page, sortBy, selectedBanks]);
 
-  function changeSort(sort) {
+  function resetList() {
     setSavings([]);
     setPage(1);
-    setSortBy(sort);
   }
 
   return (
@@ -138,7 +143,12 @@ export function Savings() {
             <IconCurrencyDollar size={16} />
           </ThemeIcon>
           <Text fw={700}>Savings</Text>
-          <TextInput placeholder="Enter amount" size="sm" />
+          <NumberInput
+            placeholder="Enter amount"
+            size="sm"
+            hideControls
+            onChange={(val) => setUserBalance(val)}
+          />
         </Group>
 
         {/* Bank Filter */}
@@ -146,12 +156,17 @@ export function Savings() {
           <ThemeIcon color="green" variant="subtle">
             <IconRepeat size={16} />
           </ThemeIcon>
-          <Text fw={700}>Cycle</Text>
+          <Text fw={700}>Filter Banks</Text>
           <MultiSelect
             // label="Your favorite libraries"
-            placeholder="Pick value"
-            data={["React", "Angular", "Vue", "Svelte"]}
+            placeholder="Filter Banks"
+            data={bankList}
             searchable
+            clearable
+            onChange={(value) => {
+              resetList();
+              setSelectedBanks(value);
+            }}
           />
         </Group>
 
@@ -171,7 +186,10 @@ export function Savings() {
               { value: "Name", label: "Account Name" },
             ]}
             defaultValue="TotalRate desc"
-            onChange={(value, option) => changeSort(value)}
+            onChange={(value, option) => {
+              resetList();
+              setSortBy(value);
+            }}
           />
         </Group>
 
@@ -207,8 +225,8 @@ export function Savings() {
         {savings.map((account, index) => {
           const isLast = index === savings.length - 1;
           return (
-            <div key={account.id} ref={isLast ? lastElementRef : null}>
-              <SavingsCard account={account} />
+            <div key={account.url} ref={isLast ? lastElementRef : null}>
+              <SavingsCard account={account} userBalance={userBalance} />
             </div>
           );
         })}
