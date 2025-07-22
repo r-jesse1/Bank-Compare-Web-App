@@ -61,12 +61,9 @@
 
                     if (existing != null)
                     {
-                        // Update existing record
-                        existing.Name = product.Name;
-                        existing.Bank = product.Bank;
-                        existing.BaseRate = product.BaseRate;
-                        existing.BonusRate = product.BonusRate;
-                        existing.BonusConditions = product.BonusConditions;
+                        // Align the primary key and update existing record
+                        product.Id = existing.Id;
+                        dbContext.Entry(existing).CurrentValues.SetValues(product);
 
                         Console.WriteLine($"Updated product {url} in database.");
                     }

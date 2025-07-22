@@ -29,11 +29,7 @@ export function SavingsCard({ account, userBalance }) {
   let baseRate = account.baseRate;
   let bonusRate = account.bonusRate;
   let totalRate = account.totalRate;
-  if (account.bank != "TCU") {
-    baseRate *= 100;
-    bonusRate *= 100;
-    totalRate *= 100;
-  }
+
   let interest = 0;
   if (Number.isFinite(userBalance)) {
     interest = userBalance * account.totalRate;
