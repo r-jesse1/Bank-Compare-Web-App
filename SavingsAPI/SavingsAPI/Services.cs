@@ -1,4 +1,5 @@
-﻿using SavingsAPI.Models;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using SavingsAPI.Models;
 using SavingsAPI.URLs;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -87,6 +88,7 @@ namespace SavingsAPI.Services
                 ?? string.Empty;
 
             string bank = product.Data.BrandName ?? product.Data.Brand;
+            string cleanName = product.Data.Name.Replace(bank, "").Trim();
 
             if (!string.Equals(bank, "TCU", StringComparison.OrdinalIgnoreCase))
             {
@@ -96,21 +98,11 @@ namespace SavingsAPI.Services
             }
 
             float totalRate = introRate > 0 ? introRate : baseRate + bonusRate;
-            Console.WriteLine(URL + "->" + uri);
 
-            if (uri == null)
-            {
-                Console.WriteLine("NULLNULL");
-                Console.WriteLine(URL);
-
-
-            }
-
-            Console.WriteLine("HELLO");
             return new SavingsAcc
             {
                 BankProductId = product.Data.ProductId,
-                Name = product.Data.Name,
+                Name = cleanName,
                 Bank = bank,
                 BaseRate = baseRate,
                 BonusRate = bonusRate,
