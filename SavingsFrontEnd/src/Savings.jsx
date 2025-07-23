@@ -95,7 +95,12 @@ export function Savings() {
       if (data.length === 0) {
         setHasMore(false);
       } else {
-        setSavings((prev) => [...prev, ...data]);
+        // Prevent duplicates by filtering based on account.id
+        setSavings((prev) => {
+          const existingIds = new Set(prev.map((a) => a.id));
+          const newUnique = data.filter((a) => !existingIds.has(a.id));
+          return [...prev, ...newUnique];
+        });
       }
     } catch (e) {
       console.error(e);
@@ -111,6 +116,7 @@ export function Savings() {
     setPage(1);
   }
 
+  console.log(savings.map((a) => a.id));
   return (
     <Container size="xl" mt="lg">
       <ActionIcon
@@ -225,7 +231,7 @@ export function Savings() {
         {savings.map((account, index) => {
           const isLast = index === savings.length - 1;
           return (
-            <div key={account.url} ref={isLast ? lastElementRef : null}>
+            <div key={account.id} ref={isLast ? lastElementRef : null}>
               <SavingsCard account={account} userBalance={userBalance} />
             </div>
           );
