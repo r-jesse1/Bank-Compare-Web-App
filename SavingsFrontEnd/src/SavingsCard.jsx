@@ -29,23 +29,48 @@ export function SavingsCard({ account, userBalance }) {
   let baseRate = account.baseRate;
   let bonusRate = account.bonusRate;
   let totalRate = account.totalRate;
+  let introRate = account.introRate;
 
   let interest = 0;
   if (Number.isFinite(userBalance)) {
     interest = userBalance * account.totalRate;
   }
-  console.log(userBalance);
+
   return (
     <Paper style={{ maxWidth: 1200 }} shadow="xl" withBorder p="xl">
       <Grid align="center">
         {/* Logo and Name */}
         <Grid.Col span={2}>
-          <Image
+          {/* <Image
             src={`https://logo.clearbit.com/${new URL(account.url).hostname}`}
             alt="Bank logo"
             width={120}
             height={120}
             fit="contain"
+          /> */}
+          <Image
+            src={`/${account.bank}.webp`}
+            alt={`${account.bank} logo`}
+            width={60}
+            height={60}
+            fit="contain"
+            data-attempt="webp"
+            onError={(e) => {
+              const img = e.currentTarget;
+              const attempt = img.getAttribute("data-attempt");
+
+              if (attempt === "webp") {
+                img.src = `/${account.bank}.png`;
+                img.setAttribute("data-attempt", "png");
+              } else if (attempt === "png") {
+                img.src = `/default.png`;
+                img.setAttribute("data-attempt", "default");
+              } else {
+                // Prevent further looping
+                console.warn(`Failed to load image for bank: ${account.bank}`);
+                img.onerror = null;
+              }
+            }}
           />
         </Grid.Col>
 
@@ -62,6 +87,10 @@ export function SavingsCard({ account, userBalance }) {
             <StackedText
               label="Bonus Rate"
               body={bonusRate?.toFixed(2) + "%"}
+            />
+            <StackedText
+              label="Intro Rate"
+              body={introRate?.toFixed(2) + "%"}
             />
             <StackedText
               label="Total Rate"
