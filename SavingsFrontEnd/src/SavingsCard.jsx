@@ -33,7 +33,10 @@ export function SavingsCard({ account, userBalance }) {
 
   let interest = 0;
   if (Number.isFinite(userBalance)) {
-    interest = userBalance * account.totalRate;
+    const r = account.totalRate / 100; // e.g. 0.05 for 5%
+    const n = 12; // monthly compounding
+    const t = 1; // 1 year
+    interest = userBalance * Math.pow(1 + r / n, n * t) - userBalance;
   }
 
   return (
