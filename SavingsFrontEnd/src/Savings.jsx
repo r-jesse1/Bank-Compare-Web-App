@@ -29,6 +29,9 @@ import {
   IconPig,
   IconSchool,
   IconHospital,
+  IconBuildingBank,
+  IconSortDescending,
+  IconGift,
 } from "@tabler/icons-react";
 
 import {
@@ -160,7 +163,7 @@ export function Savings() {
         {/* Bank Filter */}
         <Group gap={4}>
           <ThemeIcon color="green" variant="subtle">
-            <IconRepeat size={16} />
+            <IconBuildingBank size={16} />
           </ThemeIcon>
           <Text fw={700}>Filter Banks</Text>
           <MultiSelect
@@ -179,9 +182,9 @@ export function Savings() {
         {/* Sort By */}
         <Group gap={4}>
           <ThemeIcon color="teal" variant="subtle">
-            <IconCalendar size={16} />
+            <IconSortDescending size={16} />
           </ThemeIcon>
-          <Text fw={700}>Year</Text>
+          <Text fw={700}>Sort</Text>
           <Select
             size="sm"
             data={[
@@ -203,26 +206,18 @@ export function Savings() {
         <Group gap="sm">
           <Group gap={4}>
             <ThemeIcon color="pink" variant="subtle">
-              <IconPig size={16} />
+              <IconGift size={16} />
             </ThemeIcon>
-            <Text fw={700}>Super</Text>
+            <Text fw={700}>Bonus Accounts</Text>
             <Switch color="pink" defaultChecked />
           </Group>
 
           <Group gap={4}>
             <ThemeIcon color="yellow" variant="subtle">
-              <IconSchool size={16} />
+              <IconPig size={16} />
             </ThemeIcon>
-            <Text fw={700}>HECS</Text>
-            <Switch />
-          </Group>
-
-          <Group gap={4}>
-            <ThemeIcon color="blue" variant="subtle">
-              <IconHospital size={16} />
-            </ThemeIcon>
-            <Text fw={700}>Hospital</Text>
-            <Switch />
+            <Text fw={700}>Intro Accounts</Text>
+            <Switch color="yellow" defaultChecked />
           </Group>
         </Group>
       </Paper>
