@@ -1,41 +1,27 @@
 import {
-  Card,
   Text,
-  Badge,
   Stack,
   Container,
-  Anchor,
   Title,
   Group,
-  Grid,
-  Button,
-  Image,
-  Checkbox,
-  SegmentedControl,
-  Pagination,
   Paper,
-  TextInput,
   Select,
   Switch,
   ThemeIcon,
   MultiSelect,
   NumberInput,
+  Loader,
 } from "@mantine/core";
 
 import {
   IconCurrencyDollar,
-  IconRepeat,
-  IconCalendar,
   IconPig,
-  IconSchool,
-  IconHospital,
   IconBuildingBank,
   IconSortDescending,
   IconGift,
 } from "@tabler/icons-react";
 
 import {
-  MantineProvider,
   useMantineColorScheme,
   ActionIcon,
   useComputedColorScheme,
@@ -52,12 +38,12 @@ import { useEffect, useState, useRef, useCallback } from "react";
 export function Savings() {
   const [savings, setSavings] = useState([]);
   const [userBalance, setUserBalance] = useState(0);
-
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [sortBy, setSortBy] = useState("TotalRate desc");
   const [selectedBanks, setSelectedBanks] = useState([]);
-
+  const [error, setError] = useState(null);
   const observer = useRef();
 
   const { setColorScheme } = useMantineColorScheme();
@@ -93,6 +79,11 @@ export function Savings() {
       const response = await fetch(
         `http://localhost:5134/savingsrate?${params.toString()}`
       );
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.length === 0) {
@@ -102,11 +93,15 @@ export function Savings() {
         setSavings((prev) => {
           const existingIds = new Set(prev.map((a) => a.id));
           const newUnique = data.filter((a) => !existingIds.has(a.id));
+          setLoading(false);
+          setError(null);
           return [...prev, ...newUnique];
         });
       }
     } catch (e) {
-      console.error(e);
+      console.log(e);
+      setError(e.message || "An Unexpected Error Occurred");
+      setLoading(false);
     }
   };
 
@@ -115,11 +110,13 @@ export function Savings() {
   }, [page, sortBy, selectedBanks]);
 
   function resetList() {
+    setLoading(true);
     setSavings([]);
     setPage(1);
   }
 
-  console.log(savings.map((a) => a.id));
+  console.log(savings.map((a) => a));
+
   return (
     <Container size="xl" mt="lg">
       <ActionIcon
@@ -134,11 +131,9 @@ export function Savings() {
         <IconSun stroke={1.5} />
         <IconMoon stroke={1.5} />
       </ActionIcon>
-
       <Title order={2} mb="md">
         Savings Accounts
       </Title>
-
       <Paper
         shadow="md"
         p="md"
@@ -221,17 +216,43 @@ export function Savings() {
           </Group>
         </Group>
       </Paper>
-
-      <Stack>
-        {savings.map((account, index) => {
-          const isLast = index === savings.length - 1;
-          return (
-            <div key={account.id} ref={isLast ? lastElementRef : null}>
-              <SavingsCard account={account} userBalance={userBalance} />
-            </div>
-          );
-        })}
-      </Stack>
+      {loading ? (
+        <div
+          style={{
+            height: "78vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Loader color="gray" size="xl" type="bars" />
+        </div>
+      ) : error ? (
+        <div
+          style={{
+            height: "78vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "red",
+            textAlign: "center",
+            padding: "1rem",
+          }}
+        >
+          <p>{error}</p>
+        </div>
+      ) : (
+        <Stack>
+          {savings.map((account, index) => {
+            const isLast = index === savings.length - 1;
+            return (
+              <div key={account.id} ref={isLast ? lastElementRef : null}>
+                <SavingsCard account={account} userBalance={userBalance} />
+              </div>
+            );
+          })}
+        </Stack>
+      )}
     </Container>
   );
 }
