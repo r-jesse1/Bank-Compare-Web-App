@@ -33,7 +33,7 @@ export function SavingsCard({ account, userBalance }) {
 
   let interest = 0;
   if (Number.isFinite(userBalance)) {
-    const r = account.totalRate / 100; // e.g. 0.05 for 5%
+    const r = account.totalRate / 100;
     const n = 12; // monthly compounding
     const t = 1; // 1 year
     interest = userBalance * Math.pow(1 + r / n, n * t) - userBalance;
@@ -115,7 +115,17 @@ export function SavingsCard({ account, userBalance }) {
 
         {/* CTA Button */}
         <Grid.Col span={2} mt="md">
-          <Button component="a" href={account.url} target="_blank">
+          <Button
+            component="a"
+            href={account.productURL || undefined}
+            target="_blank"
+            disabled={!account.productURL}
+            onClick={(e) => {
+              if (!account.productURL) {
+                e.preventDefault();
+              }
+            }}
+          >
             Visit Site
           </Button>
         </Grid.Col>
