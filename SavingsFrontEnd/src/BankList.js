@@ -1,4 +1,6 @@
 export const bankList = [
+  "Abal Banking",
+  "AMP",
   "AMP Bank GO",
   "ANZ",
   "ANZ Plus",

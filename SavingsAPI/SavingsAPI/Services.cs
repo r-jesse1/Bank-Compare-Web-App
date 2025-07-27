@@ -88,6 +88,9 @@ namespace SavingsAPI.Services
                 ?? string.Empty;
 
             string bank = product.Data.BrandName ?? product.Data.Brand;
+            if (bank == "") bank = "Abal Banking";
+            if (bank == "Lending and bank accounts, both associated with BSB number 939 200") bank = "AMP";
+
             string cleanName = product.Data.Name.Replace(bank, "").Trim();
 
             if (!string.Equals(bank, "TCU", StringComparison.OrdinalIgnoreCase))
