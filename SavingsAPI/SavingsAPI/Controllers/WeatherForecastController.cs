@@ -25,7 +25,7 @@ namespace SavingsAPI.Controllers
         // GET: /savingsrate
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SavingsAcc>>> GetLatest(
-            int pageNumber = 1, int pageSize = 10, string sortBy = "TotalRate desc", [FromQuery] List<string>? banks = null)
+            int pageNumber = 1, int pageSize = 10, string sortBy = "TotalRate desc", [FromQuery] List<string>? banks = null, string rateType = null)
         {
             Console.WriteLine(sortBy);
             if (banks != null)
@@ -49,6 +49,21 @@ namespace SavingsAPI.Controllers
             if (banks != null && banks.Count > 0) 
             {
                 query = query.Where(a => banks.Contains(a.Bank));
+            }
+
+            if (rateType == "intro")
+            {
+                query = query.Where(a => a.IntroRate > 0);
+            }
+
+            if (rateType == "bonus")
+            {
+                query = query.Where(a => a.BonusRate > 0);
+            }
+
+            if (rateType == "none")
+            {
+                query = query.Where(a => a.BonusRate == 0 && a.IntroRate == 0);
             }
 
             var totalRecords = await query.CountAsync();

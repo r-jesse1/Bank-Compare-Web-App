@@ -43,6 +43,10 @@ export function Savings() {
   const [hasMore, setHasMore] = useState(true);
   const [sortBy, setSortBy] = useState("TotalRate desc");
   const [selectedBanks, setSelectedBanks] = useState([]);
+
+  const [bonus, setBonus] = useState(true);
+  const [intro, setIntro] = useState(true);
+
   const [error, setError] = useState(null);
   const observer = useRef();
 
@@ -50,6 +54,22 @@ export function Savings() {
   const computedColorScheme = useComputedColorScheme("light", {
     getInitialValueInEffect: true,
   });
+
+  function getRateType() {
+    if (bonus && intro) {
+      return "all";
+    }
+    if (!bonus && !intro) {
+      return "none";
+    }
+    if (bonus) {
+      return "bonus";
+    }
+    if (intro) {
+      return "intro";
+    }
+    return "all";
+  }
 
   const lastElementRef = useCallback(
     (node) => {
@@ -68,10 +88,12 @@ export function Savings() {
 
   const fetchSavings = async (pageNumber) => {
     try {
+      const rateType = getRateType();
       const params = new URLSearchParams({
         pageNumber: pageNumber.toString(),
         pageSize: "10",
         sortBy: sortBy,
+        rateType: rateType,
       });
 
       selectedBanks.forEach((bank) => params.append("banks", bank));
@@ -107,7 +129,7 @@ export function Savings() {
 
   useEffect(() => {
     fetchSavings(page);
-  }, [page, sortBy, selectedBanks]);
+  }, [page, sortBy, selectedBanks, bonus, intro]);
 
   function resetList() {
     setLoading(true);
@@ -204,7 +226,15 @@ export function Savings() {
               <IconGift size={16} />
             </ThemeIcon>
             <Text fw={700}>Bonus Accounts</Text>
-            <Switch color="pink" defaultChecked />
+            <Switch
+              color="pink"
+              defaultChecked
+              checked={bonus}
+              onChange={(event) => {
+                resetList();
+                setBonus(event.currentTarget.checked);
+              }}
+            />
           </Group>
 
           <Group gap={4}>
@@ -212,7 +242,15 @@ export function Savings() {
               <IconPig size={16} />
             </ThemeIcon>
             <Text fw={700}>Intro Accounts</Text>
-            <Switch color="yellow" defaultChecked />
+            <Switch
+              color="yellow"
+              defaultChecked
+              checked={intro}
+              onChange={(event) => {
+                resetList();
+                setIntro(event.currentTarget.checked);
+              }}
+            />
           </Group>
         </Group>
       </Paper>
