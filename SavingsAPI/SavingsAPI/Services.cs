@@ -93,6 +93,7 @@ namespace SavingsAPI.Services
 
             string cleanName = product.Data.Name.Replace(bank, "").Trim();
 
+            // TCU already has their rates in percentages
             if (!string.Equals(bank, "TCU", StringComparison.OrdinalIgnoreCase))
             {
                 baseRate = (float)Math.Round(baseRate * 100, 2);
@@ -100,7 +101,35 @@ namespace SavingsAPI.Services
                 introRate = (float)Math.Round(introRate * 100, 2);
             }
 
-            float totalRate = introRate > 0 ? introRate : baseRate + bonusRate;
+            // DBL already has the base rate included in the bonus rate
+            if (string.Equals(bank, "Defence Bank Limited", StringComparison.OrdinalIgnoreCase))
+            {
+                bonusRate -= baseRate;
+            }
+
+
+            float totalRate;
+
+            if (introRate > 0 && bonusRate > 0)
+            {
+                totalRate = baseRate + introRate + bonusRate;
+            }
+            else if (introRate > 0)
+            {
+                totalRate = introRate;
+            }
+            else
+            {
+                totalRate = baseRate + bonusRate;
+            }
+
+            
+            if (string.Equals(bank, "ubank", StringComparison.OrdinalIgnoreCase))
+            {
+                totalRate -= baseRate;
+            }
+
+
 
             return new SavingsAcc
             {
