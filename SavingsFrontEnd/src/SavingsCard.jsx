@@ -86,14 +86,14 @@ export function SavingsCard({ account, userBalance }) {
         {/* Interest Breakdown */}
         <Grid.Col span={6} offset={3}>
           <Group justify="space-between" gap="xl">
-            <StackedText label="Base Rate" body={baseRate?.toFixed(2) + "%"} />
+            <StackedText label="Base Rate" body={`${baseRate?.toFixed(2)}%`} />
             <StackedText
               label="Bonus Rate"
-              body={bonusRate?.toFixed(2) + "%"}
+              body={bonusRate === 0 ? "—" : `${bonusRate?.toFixed(2)}%`}
             />
             <StackedText
               label="Intro Rate"
-              body={introRate?.toFixed(2) + "%"}
+              body={introRate === 0 ? "—" : `${introRate?.toFixed(2)}%`}
             />
             <StackedText
               label="Total Rate"
