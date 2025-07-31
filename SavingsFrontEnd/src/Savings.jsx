@@ -21,16 +21,10 @@ import {
   IconGift,
 } from "@tabler/icons-react";
 
-import {
-  useMantineColorScheme,
-  ActionIcon,
-  useComputedColorScheme,
-} from "@mantine/core";
 import "./App.css";
 
 import { bankList } from "./BankList";
 
-import { IconSun, IconMoon } from "@tabler/icons-react";
 import { SavingsCard } from "./SavingsCard";
 
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -49,11 +43,6 @@ export function Savings() {
 
   const [error, setError] = useState(null);
   const observer = useRef();
-
-  const { setColorScheme } = useMantineColorScheme();
-  const computedColorScheme = useComputedColorScheme("light", {
-    getInitialValueInEffect: true,
-  });
 
   function getRateType() {
     if (bonus && intro) {
@@ -141,18 +130,6 @@ export function Savings() {
 
   return (
     <Container size="xl" mt="lg">
-      <ActionIcon
-        className="toggle-theme-button"
-        onClick={() =>
-          setColorScheme(computedColorScheme === "light" ? "dark" : "light")
-        }
-        variant="default"
-        size="lg"
-        aria-label="Toggle color scheme"
-      >
-        <IconSun stroke={1.5} />
-        <IconMoon stroke={1.5} />
-      </ActionIcon>
       <Title order={2} mb="md">
         Savings Accounts
       </Title>

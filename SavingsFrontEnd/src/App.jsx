@@ -5,6 +5,7 @@ import { shadcnCssVariableResolver } from "./cssVariableResolver.ts";
 import { shadcnTheme } from "./theme.ts";
 import { MantineProvider } from "@mantine/core";
 
+import ThemeToggle from "./components/ThemeToggle";
 import { Savings } from "./Savings";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
@@ -15,6 +16,7 @@ function App() {
       cssVariablesResolver={shadcnCssVariableResolver}
     >
       <Router>
+        <ThemeToggle />
         <Routes>
           <Route path="/" element={<Savings />} />
         </Routes>
