@@ -25,6 +25,7 @@ import "./App.css";
 
 import { bankList } from "./BankList";
 
+import { Logo } from "./components/Logo";
 import { SavingsCard } from "./SavingsCard";
 
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -130,9 +131,7 @@ export function Savings() {
 
   return (
     <Container size="xl" mt="lg">
-      <Title order={2} mb="md">
-        Savings Accounts
-      </Title>
+      <Logo />
       <Paper
         shadow="md"
         p="md"
