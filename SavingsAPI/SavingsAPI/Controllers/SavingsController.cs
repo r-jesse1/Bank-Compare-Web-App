@@ -86,20 +86,23 @@ namespace SavingsAPI.Controllers
 
             return Ok(accounts);
         }
-        //[HttpGet]
-        //public async Task<ActionResult<SavingsAcc>> GetAccountAsync()
-        //{
-        //    string json = await ApiFetcher.GetJsonFromCBAAsync();
-        //    string URL = "google.com";
-        //    if (json == null)
-        //        return BadRequest("problems getting bank json");
 
-        //    var account = SavingsRateExtractor.ParseSavingsAccount(json, URL);
 
-        //    if (account == null)
-        //        return BadRequest("Unable to parse savings account data.");
+        // GET: /savingsrate/history?url={URL}
+        [HttpGet("history")]
+        public async Task<ActionResult<IEnumerable<SavingsAcc>>> History([FromQuery] string url)
+        {
+            var records = await _dbContext.SavingsAccounts
+                .Where(a => a.URL == url)
+                .OrderBy(a => a.Date)
+                .Select(a => new
+                {
+                    a.TotalRate,
+                    a.Date
+                })
+                .ToListAsync();
 
-        //    return Ok(account);
-        //}
+            return Ok(records);
+        }
     }
 }
