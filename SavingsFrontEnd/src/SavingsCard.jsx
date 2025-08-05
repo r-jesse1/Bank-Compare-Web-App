@@ -1,31 +1,20 @@
 import {
-  Card,
   Text,
-  Badge,
-  Stack,
-  Container,
-  Anchor,
   Title,
   Group,
   Grid,
   Button,
   Image,
-  Checkbox,
-  SegmentedControl,
   Paper,
+  Modal,
 } from "@mantine/core";
-import {
-  MantineProvider,
-  useMantineColorScheme,
-  ActionIcon,
-  useComputedColorScheme,
-} from "@mantine/core";
+import { LineChart } from "@mantine/charts";
+import { useState } from "react";
+
 import { StackedText } from "./components/StackedText";
-import { IconSun, IconMoon } from "@tabler/icons-react";
+import { SavingsRateChartModal } from "./components/SavingsRateChartModal";
 
-import { useState, useEffect } from "react";
-
-export function SavingsCard({ account, userBalance }) {
+export function SavingsCard({ account, userBalance, setHistory, setOpen }) {
   let baseRate = account.baseRate;
   let bonusRate = account.bonusRate;
   let totalRate = account.totalRate;
@@ -37,6 +26,25 @@ export function SavingsCard({ account, userBalance }) {
     const n = 12; // monthly compounding
     const t = 1; // 1 year
     interest = userBalance * Math.pow(1 + r / n, n * t) - userBalance;
+  }
+
+  async function fetchHistory(url) {
+    try {
+      const response = await fetch(
+        `http://localhost:5134/savingsrate/history?url=${url}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setHistory(data);
+      setOpen(true);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   return (
@@ -109,7 +117,9 @@ export function SavingsCard({ account, userBalance }) {
         {/* Description and CTA */}
         <Grid.Col span={10}>
           <Text size="sm" mt="sm">
-            {account.bonusConditions || "No bonus conditions provided."}
+            {account.bonusConditions ||
+              account.introConditions ||
+              "No bonus conditions provided."}
           </Text>
         </Grid.Col>
 
@@ -128,6 +138,10 @@ export function SavingsCard({ account, userBalance }) {
           >
             Visit Site
           </Button>
+        </Grid.Col>
+
+        <Grid.Col span={2} mt="md">
+          <Button onClick={(_) => fetchHistory(account.url)}>Chart</Button>
         </Grid.Col>
       </Grid>
     </Paper>

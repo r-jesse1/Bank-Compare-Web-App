@@ -11,8 +11,10 @@ import {
   MultiSelect,
   NumberInput,
   Loader,
+  Drawer,
+  Button,
 } from "@mantine/core";
-
+import { useDisclosure } from "@mantine/hooks";
 import {
   IconCurrencyDollar,
   IconPig,
@@ -27,6 +29,7 @@ import { bankList } from "./BankList";
 
 import { Logo } from "./components/Logo";
 import { SavingsCard } from "./SavingsCard";
+import { SavingsRateChartModal } from "./components/SavingsRateChartModal";
 
 import { useEffect, useState, useRef, useCallback } from "react";
 
@@ -38,7 +41,8 @@ export function Savings() {
   const [hasMore, setHasMore] = useState(true);
   const [sortBy, setSortBy] = useState("TotalRate desc");
   const [selectedBanks, setSelectedBanks] = useState([]);
-
+  const [openModal, setOpenModal] = useState(false);
+  const [history, setHistory] = useState("");
   const [bonus, setBonus] = useState(true);
   const [intro, setIntro] = useState(true);
 
@@ -131,7 +135,13 @@ export function Savings() {
 
   return (
     <Container size="xl" mt="lg">
+      <SavingsRateChartModal
+        open={openModal}
+        setOpen={setOpenModal}
+        data={history}
+      />
       <Logo />
+      <></>
       <Paper
         shadow="md"
         p="md"
@@ -261,7 +271,12 @@ export function Savings() {
             const isLast = index === savings.length - 1;
             return (
               <div key={account.id} ref={isLast ? lastElementRef : null}>
-                <SavingsCard account={account} userBalance={userBalance} />
+                <SavingsCard
+                  account={account}
+                  userBalance={userBalance}
+                  setOpen={setOpenModal}
+                  setHistory={setHistory}
+                />
               </div>
             );
           })}
